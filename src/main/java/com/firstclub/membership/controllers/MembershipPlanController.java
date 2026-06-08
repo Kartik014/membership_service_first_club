@@ -4,6 +4,7 @@ import com.firstclub.membership.DTO.MembershipPlanResponseDTO;
 import com.firstclub.membership.interfaces.MembershipPlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
@@ -17,5 +18,10 @@ public class MembershipPlanController {
     @GetMapping
     public List<MembershipPlanResponseDTO> getPlans(){
         return membershipPlanService.getAllPlans();
+    }
+
+    @GetMapping("/{id}")
+    public MembershipPlanResponseDTO getPlan(@PathVariable Long id){
+        return membershipPlanService.getPlan(id);
     }
 }

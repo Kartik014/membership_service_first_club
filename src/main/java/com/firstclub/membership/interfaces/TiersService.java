@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface TiersService {
     List<TiersResponseDTO> getAllTiers();
+    TiersResponseDTO getTier(Long id);
 }
