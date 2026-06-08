@@ -19,9 +19,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "user_code", nullable = false, unique = true)
-    private UUID userCode;
-
     @Column(nullable = false)
     private String name;
 

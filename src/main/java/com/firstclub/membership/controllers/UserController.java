@@ -1,6 +1,7 @@
 package com.firstclub.membership.controllers;
 
 import com.firstclub.membership.DTO.CreateUserRequestDTO;
+import com.firstclub.membership.DTO.MembershipResponseDTO;
 import com.firstclub.membership.DTO.UserResponseDTO;
 import com.firstclub.membership.interfaces.UserService;
 import jakarta.validation.Valid;
@@ -28,5 +29,10 @@ public class UserController {
     @GetMapping("/{id}")
     UserResponseDTO getUser(@PathVariable Long id) {
         return userService.getUser(id);
+    }
+
+    @GetMapping("/{id}/memberships")
+    public MembershipResponseDTO getUserActiveMembership(@PathVariable Long id){
+        return userService.getUserActiveMembership(id);
     }
 }

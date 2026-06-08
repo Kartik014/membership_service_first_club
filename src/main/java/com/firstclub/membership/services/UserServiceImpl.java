@@ -1,25 +1,28 @@
 package com.firstclub.membership.services;
 
 import com.firstclub.membership.DTO.CreateUserRequestDTO;
+import com.firstclub.membership.DTO.MembershipResponseDTO;
 import com.firstclub.membership.DTO.UserResponseDTO;
+import com.firstclub.membership.entity.Membership;
 import com.firstclub.membership.entity.User;
+import com.firstclub.membership.enums.MembershipStatus;
 import com.firstclub.membership.interfaces.UserService;
+import com.firstclub.membership.repository.MembershipRepository;
 import com.firstclub.membership.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final MembershipRepository membershipRepository;
 
     private UserResponseDTO mapToResponse(User user){
         return new UserResponseDTO(
-                user.getUserCode(),
                 user.getName(),
                 user.getEmail(),
                 user.getCohort(),
@@ -34,7 +37,6 @@ public class UserServiceImpl implements UserService {
                 .findAll()
                 .stream()
                 .map(user -> new UserResponseDTO(
-                        user.getUserCode(),
                         user.getName(),
                         user.getEmail(),
                         user.getEmail(),
@@ -50,7 +52,6 @@ public class UserServiceImpl implements UserService {
         }
 
         User newUser = User.builder()
-                .userCode(UUID.randomUUID())
                 .name(createUserRequestDTO.name())
                 .cohort(createUserRequestDTO.cohort())
                 .email(createUserRequestDTO.email())
@@ -71,5 +72,22 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).get();
 
         return mapToResponse(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MembershipResponseDTO getUserActiveMembership(Long userId){
+        Membership activeMembership = membershipRepository.findByUser_IdAndStatus(userId, MembershipStatus.ACTIVE).orElseThrow(() -> new IllegalStateException("User does not have an active membership"));
+
+        return new MembershipResponseDTO(
+                activeMembership.getId(),
+                activeMembership.getUser().getId(),
+                activeMembership.getUser().getName(),
+                activeMembership.getPlan().getName(),
+                activeMembership.getTier().getName(),
+                activeMembership.getStatus(),
+                activeMembership.getStartDate(),
+                activeMembership.getExpiryDate()
+        );
     }
 }

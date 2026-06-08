@@ -1,6 +1,5 @@
 CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
-    user_code UUID NOT NULL UNIQUE,
     name VARCHAR(255),
     email VARCHAR(255) UNIQUE,
     cohort VARCHAR(100),
