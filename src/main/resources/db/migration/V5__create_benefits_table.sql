@@ -1,0 +1,8 @@
+CREATE TABLE benefits (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    benefit_type VARCHAR(50) NOT NULL,
+    value NUMERIC(10,2),
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
