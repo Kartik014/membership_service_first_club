@@ -3,6 +3,7 @@ package com.firstclub.membership.controllers;
 import com.firstclub.membership.DTO.MembershipHistoryResponseDTO;
 import com.firstclub.membership.DTO.MembershipResponseDTO;
 import com.firstclub.membership.DTO.SubscribeRequestDTO;
+import com.firstclub.membership.DTO.UpgradeMembershipRequestDTO;
 import com.firstclub.membership.interfaces.MembershipHistoryService;
 import com.firstclub.membership.interfaces.MembershipService;
 import jakarta.validation.Valid;
@@ -35,5 +36,15 @@ public class MembershipController {
     @PostMapping("/{membershipId}/cancel")
     public MembershipResponseDTO cancelMembership(@PathVariable Long membershipId){
         return membershipService.cancelMembership(membershipId);
+    }
+
+    @PatchMapping("/{membershipId}/upgrade")
+    public MembershipResponseDTO upgradeMembership(@PathVariable Long membershipId, @Valid @RequestBody UpgradeMembershipRequestDTO upgradeMembershipRequestDTO){
+        return membershipService.upgradeMembership(membershipId, upgradeMembershipRequestDTO);
+    }
+
+    @PatchMapping("/{membershipId}/downgrade")
+    public MembershipResponseDTO downgradeMembership(@PathVariable Long membershipId, @Valid @RequestBody UpgradeMembershipRequestDTO upgradeMembershipRequestDTO){
+        return membershipService.downgradeMembership(membershipId, upgradeMembershipRequestDTO);
     }
 }

@@ -2,6 +2,7 @@ package com.firstclub.membership.services;
 
 import com.firstclub.membership.DTO.MembershipResponseDTO;
 import com.firstclub.membership.DTO.SubscribeRequestDTO;
+import com.firstclub.membership.DTO.UpgradeMembershipRequestDTO;
 import com.firstclub.membership.entity.*;
 import com.firstclub.membership.enums.MembershipAction;
 import com.firstclub.membership.enums.MembershipStatus;
@@ -108,6 +109,84 @@ public class MembershipServiceImpl implements MembershipService {
                 .newTier(null)
                 .action(MembershipAction.CANCELLED)
                 .remarks("Membership Cancelled")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        membershipHistoryRepository.save(history);
+
+        return mapToResponse(membership);
+    }
+
+    @Override
+    @Transactional
+    public MembershipResponseDTO upgradeMembership(Long membershipId, UpgradeMembershipRequestDTO upgradeMembershipRequestDTO) {
+        Long newTierId = upgradeMembershipRequestDTO.newTierId();
+
+        Membership membership = membershipRepository.findById(membershipId).orElseThrow(() -> new IllegalStateException("Membership not found"));
+
+        if(membership.getStatus() != MembershipStatus.ACTIVE){
+            throw new RuntimeException("Only active memberships can be upgraded");
+        }
+
+        Tier newTier = tiersRepository.findById(newTierId).orElseThrow(() -> new IllegalStateException("Tier not found"));
+        Tier currentTier = membership.getTier();
+
+        if(currentTier.getId().equals(newTier.getId())){
+            throw new IllegalStateException("New tier must be different from current tier");
+        }
+
+        if(currentTier.getPriority() >= newTier.getPriority()){
+            throw new IllegalStateException("New tier must have higher priority than current tier");
+        }
+
+        membership.setTier(newTier);
+        membership = membershipRepository.save(membership);
+
+        MembershipHistory history = MembershipHistory.builder()
+                .membership(membership)
+                .oldTier(currentTier)
+                .newTier(newTier)
+                .action(MembershipAction.UPGRADED)
+                .remarks("Membership upgrade")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        membershipHistoryRepository.save(history);
+
+        return mapToResponse(membership);
+    }
+
+    @Override
+    @Transactional
+    public MembershipResponseDTO downgradeMembership(Long membershipId, UpgradeMembershipRequestDTO upgradeMembershipRequestDTO){
+        Long newTierId = upgradeMembershipRequestDTO.newTierId();
+
+        Membership membership = membershipRepository.findById(membershipId).orElseThrow(() -> new IllegalStateException("Membership not found"));
+
+        if(membership.getStatus() != MembershipStatus.ACTIVE){
+            throw new RuntimeException("Only active memberships can be upgraded");
+        }
+
+        Tier newTier = tiersRepository.findById(newTierId).orElseThrow(() -> new IllegalStateException("Tier not found"));
+        Tier currentTier = membership.getTier();
+
+        if(currentTier.getId().equals(newTier.getId())){
+            throw new IllegalStateException("New tier must be different from current tier");
+        }
+
+        if(currentTier.getPriority() <= newTier.getPriority()){
+            throw new IllegalStateException("New tier must have lower priority than current tier");
+        }
+
+        membership.setTier(newTier);
+        membership = membershipRepository.save(membership);
+
+        MembershipHistory history = MembershipHistory.builder()
+                .membership(membership)
+                .oldTier(currentTier)
+                .newTier(newTier)
+                .action(MembershipAction.DOWNGRADED)
+                .remarks("Membership downgraded")
                 .createdAt(LocalDateTime.now())
                 .build();
 
