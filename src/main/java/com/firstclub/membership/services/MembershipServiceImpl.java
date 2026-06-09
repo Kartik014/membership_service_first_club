@@ -48,8 +48,8 @@ public class MembershipServiceImpl implements MembershipService {
             throw new RuntimeException("User already has an active membership");
         }
 
-        LocalDateTime startdate = LocalDateTime.now();
-        LocalDateTime expiryDate = startdate.plusDays(membershipPlan.getDurationDays());
+        LocalDateTime startDate = LocalDateTime.now();
+        LocalDateTime expiryDate = startDate.plusDays(membershipPlan.getDurationDays());
 
         Membership newMembership = Membership.builder()
                 .user(user)
@@ -57,7 +57,7 @@ public class MembershipServiceImpl implements MembershipService {
                 .tier(tier)
                 .status(MembershipStatus.ACTIVE)
                 .autoRenew(subscribeRequestDTO.autoRenew())
-                .startDate(startdate)
+                .startDate(startDate)
                 .expiryDate(expiryDate)
                 .build();
 
@@ -65,6 +65,7 @@ public class MembershipServiceImpl implements MembershipService {
 
         MembershipHistory newMembershipHistory = MembershipHistory.builder()
                 .membership(newMembership)
+                .oldTier(null)
                 .newTier(tier)
                 .action(MembershipAction.SUBSCRIBED)
                 .remarks("Membership created")
@@ -91,5 +92,27 @@ public class MembershipServiceImpl implements MembershipService {
                 membership.getStartDate(),
                 membership.getExpiryDate()
         );
+    }
+
+    @Override
+    public MembershipResponseDTO cancelMembership(Long membershipId){
+        Membership membership = membershipRepository.findByIdAndStatus(membershipId, MembershipStatus.ACTIVE).orElseThrow(() -> new RuntimeException("Membership not found"));
+
+        membership.setStatus(MembershipStatus.CANCELLED);
+
+        membership = membershipRepository.save(membership);
+
+        MembershipHistory history = MembershipHistory.builder()
+                .membership(membership)
+                .oldTier(membership.getTier())
+                .newTier(null)
+                .action(MembershipAction.CANCELLED)
+                .remarks("Membership Cancelled")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        membershipHistoryRepository.save(history);
+
+        return mapToResponse(membership);
     }
 }
