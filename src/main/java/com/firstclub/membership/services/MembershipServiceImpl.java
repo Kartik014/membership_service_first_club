@@ -1,11 +1,14 @@
 package com.firstclub.membership.services;
 
-import com.firstclub.membership.DTO.MembershipResponseDTO;
-import com.firstclub.membership.DTO.SubscribeRequestDTO;
-import com.firstclub.membership.DTO.UpgradeMembershipRequestDTO;
+import com.firstclub.membership.DTO.Responses.MembershipResponseDTO;
+import com.firstclub.membership.DTO.Requests.SubscribeRequestDTO;
+import com.firstclub.membership.DTO.Requests.UpgradeMembershipRequestDTO;
 import com.firstclub.membership.entity.*;
 import com.firstclub.membership.enums.MembershipAction;
 import com.firstclub.membership.enums.MembershipStatus;
+import com.firstclub.membership.exceptions.DuplicateResourceException;
+import com.firstclub.membership.exceptions.InvalidOperationException;
+import com.firstclub.membership.exceptions.ResourceNotFoundException;
 import com.firstclub.membership.interfaces.MembershipService;
 import com.firstclub.membership.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -41,12 +44,12 @@ public class MembershipServiceImpl implements MembershipService {
         Long membershipPlanId = subscribeRequestDTO.planId();
         Long tierId = subscribeRequestDTO.tierId();
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalStateException("User not found"));
-        MembershipPlan membershipPlan = membershipPlanRepository.findById(membershipPlanId).orElseThrow(() -> new IllegalStateException("Membership plan not found"));
-        Tier tier = tiersRepository.findById(tierId).orElseThrow(() -> new IllegalStateException("Tier not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        MembershipPlan membershipPlan = membershipPlanRepository.findById(membershipPlanId).orElseThrow(() -> new ResourceNotFoundException("Membership plan not found"));
+        Tier tier = tiersRepository.findById(tierId).orElseThrow(() -> new ResourceNotFoundException("Tier not found"));
 
         if(membershipRepository.existsByUser_IdAndStatus(userId, MembershipStatus.ACTIVE)){
-            throw new RuntimeException("User already has an active membership");
+            throw new DuplicateResourceException("User already has an active membership");
         }
 
         LocalDateTime startDate = LocalDateTime.now();
@@ -81,7 +84,7 @@ public class MembershipServiceImpl implements MembershipService {
     @Override
     @Transactional(readOnly = true)
     public MembershipResponseDTO getMembership(Long id){
-        Membership membership = membershipRepository.findById(id).orElseThrow(() -> new IllegalStateException("Membership not found"));
+        Membership membership = membershipRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Membership not found"));
 
         return new MembershipResponseDTO(
                 membership.getId(),
@@ -97,7 +100,7 @@ public class MembershipServiceImpl implements MembershipService {
 
     @Override
     public MembershipResponseDTO cancelMembership(Long membershipId){
-        Membership membership = membershipRepository.findByIdAndStatus(membershipId, MembershipStatus.ACTIVE).orElseThrow(() -> new RuntimeException("Membership not found"));
+        Membership membership = membershipRepository.findByIdAndStatus(membershipId, MembershipStatus.ACTIVE).orElseThrow(() -> new ResourceNotFoundException("Membership not found"));
 
         membership.setStatus(MembershipStatus.CANCELLED);
 
@@ -122,21 +125,21 @@ public class MembershipServiceImpl implements MembershipService {
     public MembershipResponseDTO upgradeMembership(Long membershipId, UpgradeMembershipRequestDTO upgradeMembershipRequestDTO) {
         Long newTierId = upgradeMembershipRequestDTO.newTierId();
 
-        Membership membership = membershipRepository.findById(membershipId).orElseThrow(() -> new IllegalStateException("Membership not found"));
+        Membership membership = membershipRepository.findById(membershipId).orElseThrow(() -> new ResourceNotFoundException("Membership not found"));
 
         if(membership.getStatus() != MembershipStatus.ACTIVE){
-            throw new RuntimeException("Only active memberships can be upgraded");
+            throw new InvalidOperationException("Only active memberships can be upgraded");
         }
 
-        Tier newTier = tiersRepository.findById(newTierId).orElseThrow(() -> new IllegalStateException("Tier not found"));
+        Tier newTier = tiersRepository.findById(newTierId).orElseThrow(() -> new ResourceNotFoundException("Tier not found"));
         Tier currentTier = membership.getTier();
 
         if(currentTier.getId().equals(newTier.getId())){
-            throw new IllegalStateException("New tier must be different from current tier");
+            throw new InvalidOperationException("New tier must be different from current tier");
         }
 
         if(currentTier.getPriority() >= newTier.getPriority()){
-            throw new IllegalStateException("New tier must have higher priority than current tier");
+            throw new InvalidOperationException("New tier must have higher priority than current tier");
         }
 
         membership.setTier(newTier);
@@ -161,21 +164,21 @@ public class MembershipServiceImpl implements MembershipService {
     public MembershipResponseDTO downgradeMembership(Long membershipId, UpgradeMembershipRequestDTO upgradeMembershipRequestDTO){
         Long newTierId = upgradeMembershipRequestDTO.newTierId();
 
-        Membership membership = membershipRepository.findById(membershipId).orElseThrow(() -> new IllegalStateException("Membership not found"));
+        Membership membership = membershipRepository.findById(membershipId).orElseThrow(() -> new ResourceNotFoundException("Membership not found"));
 
         if(membership.getStatus() != MembershipStatus.ACTIVE){
-            throw new RuntimeException("Only active memberships can be upgraded");
+            throw new InvalidOperationException("Only active memberships can be upgraded");
         }
 
-        Tier newTier = tiersRepository.findById(newTierId).orElseThrow(() -> new IllegalStateException("Tier not found"));
+        Tier newTier = tiersRepository.findById(newTierId).orElseThrow(() -> new ResourceNotFoundException("Tier not found"));
         Tier currentTier = membership.getTier();
 
         if(currentTier.getId().equals(newTier.getId())){
-            throw new IllegalStateException("New tier must be different from current tier");
+            throw new InvalidOperationException("New tier must be different from current tier");
         }
 
         if(currentTier.getPriority() <= newTier.getPriority()){
-            throw new IllegalStateException("New tier must have lower priority than current tier");
+            throw new InvalidOperationException("New tier must have lower priority than current tier");
         }
 
         membership.setTier(newTier);

@@ -1,4 +1,4 @@
-package com.firstclub.membership.DTO;
+package com.firstclub.membership.DTO.Requests;
 
 import jakarta.validation.constraints.NotNull;
 

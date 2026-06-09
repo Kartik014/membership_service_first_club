@@ -1,8 +1,8 @@
 package com.firstclub.membership.interfaces;
 
-import com.firstclub.membership.DTO.MembershipResponseDTO;
-import com.firstclub.membership.DTO.SubscribeRequestDTO;
-import com.firstclub.membership.DTO.UpgradeMembershipRequestDTO;
+import com.firstclub.membership.DTO.Responses.MembershipResponseDTO;
+import com.firstclub.membership.DTO.Requests.SubscribeRequestDTO;
+import com.firstclub.membership.DTO.Requests.UpgradeMembershipRequestDTO;
 
 public interface MembershipService {
     MembershipResponseDTO subscribe(SubscribeRequestDTO subscribeRequestDTO);

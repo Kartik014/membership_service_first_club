@@ -1,6 +1,6 @@
 package com.firstclub.membership.interfaces;
 
-import com.firstclub.membership.DTO.MembershipHistoryResponseDTO;
+import com.firstclub.membership.DTO.Responses.MembershipHistoryResponseDTO;
 import java.util.List;
 
 public interface MembershipHistoryService {

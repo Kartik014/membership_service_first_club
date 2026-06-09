@@ -1,11 +1,13 @@
 package com.firstclub.membership.controllers;
 
-import com.firstclub.membership.DTO.MembershipHistoryResponseDTO;
-import com.firstclub.membership.DTO.MembershipResponseDTO;
-import com.firstclub.membership.DTO.SubscribeRequestDTO;
-import com.firstclub.membership.DTO.UpgradeMembershipRequestDTO;
+import com.firstclub.membership.DTO.Requests.SubscribeRequestDTO;
+import com.firstclub.membership.DTO.Requests.UpgradeMembershipRequestDTO;
+import com.firstclub.membership.DTO.Responses.MembershipHistoryResponseDTO;
+import com.firstclub.membership.DTO.Responses.MembershipResponseDTO;
+import com.firstclub.membership.DTO.Responses.TierRefreshResponseDTO;
 import com.firstclub.membership.interfaces.MembershipHistoryService;
 import com.firstclub.membership.interfaces.MembershipService;
+import com.firstclub.membership.interfaces.TiersService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,7 @@ import java.util.List;
 public class MembershipController {
     private final MembershipService membershipService;
     private final MembershipHistoryService membershipHistoryService;
+    private final TiersService tiersService;
 
     @PostMapping("/subscribe")
     public MembershipResponseDTO subscribe(@Valid @RequestBody SubscribeRequestDTO subscribeRequestDTO){
@@ -46,5 +49,10 @@ public class MembershipController {
     @PatchMapping("/{membershipId}/downgrade")
     public MembershipResponseDTO downgradeMembership(@PathVariable Long membershipId, @Valid @RequestBody UpgradeMembershipRequestDTO upgradeMembershipRequestDTO){
         return membershipService.downgradeMembership(membershipId, upgradeMembershipRequestDTO);
+    }
+
+    @PostMapping("/{membershipId}/refresh-tier")
+    public TierRefreshResponseDTO refreshUserTier(@PathVariable Long membershipId){
+        return tiersService.refreshUserTier(membershipId);
     }
 }

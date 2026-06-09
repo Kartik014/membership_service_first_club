@@ -1,11 +1,11 @@
 package com.firstclub.membership.entity;
 
+import com.firstclub.membership.enums.UserCohort;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -25,7 +25,8 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    private String cohort;
+    @Enumerated(EnumType.STRING)
+    private UserCohort cohort;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

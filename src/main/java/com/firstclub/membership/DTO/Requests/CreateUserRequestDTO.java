@@ -1,5 +1,6 @@
-package com.firstclub.membership.DTO;
+package com.firstclub.membership.DTO.Requests;
 
+import com.firstclub.membership.enums.UserCohort;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -11,6 +12,6 @@ public record CreateUserRequestDTO(
         @Email(message = "Invalid Email")
         String email,
 
-        String cohort
+        UserCohort cohort
 ) {
 }

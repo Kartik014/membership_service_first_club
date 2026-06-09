@@ -1,7 +1,8 @@
 package com.firstclub.membership.services;
 
-import com.firstclub.membership.DTO.MembershipHistoryResponseDTO;
+import com.firstclub.membership.DTO.Responses.MembershipHistoryResponseDTO;
 import com.firstclub.membership.entity.MembershipHistory;
+import com.firstclub.membership.exceptions.ResourceNotFoundException;
 import com.firstclub.membership.interfaces.MembershipHistoryService;
 import com.firstclub.membership.repository.MembershipHistoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class MembershipHistoryServiceImpl implements MembershipHistoryService {
     @Override
     @Transactional(readOnly = true)
     public List<MembershipHistoryResponseDTO> getMembershipHistory(Long membershipId) {
-        List<MembershipHistory> history = membershipHistoryRepository.findByMembership_Id(membershipId).orElseThrow(() -> new RuntimeException("Membership history not found."));
+        List<MembershipHistory> history = membershipHistoryRepository.findByMembership_Id(membershipId).orElseThrow(() -> new ResourceNotFoundException("Membership history not found."));
 
         return history
                 .stream()

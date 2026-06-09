@@ -1,6 +1,6 @@
 package com.firstclub.membership.interfaces;
 
-import com.firstclub.membership.DTO.MembershipPlanResponseDTO;
+import com.firstclub.membership.DTO.Responses.MembershipPlanResponseDTO;
 import java.util.List;
 
 public interface MembershipPlanService {

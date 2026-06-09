@@ -1,4 +1,4 @@
-package com.firstclub.membership.DTO;
+package com.firstclub.membership.DTO.Responses;
 
 import com.firstclub.membership.enums.MembershipStatus;
 import java.time.LocalDateTime;

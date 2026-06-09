@@ -1,9 +1,9 @@
 package com.firstclub.membership.interfaces;
 
-import com.firstclub.membership.DTO.BenefitResponseDTO;
-import com.firstclub.membership.DTO.CreateUserRequestDTO;
-import com.firstclub.membership.DTO.MembershipResponseDTO;
-import com.firstclub.membership.DTO.UserResponseDTO;
+import com.firstclub.membership.DTO.Responses.BenefitResponseDTO;
+import com.firstclub.membership.DTO.Requests.CreateUserRequestDTO;
+import com.firstclub.membership.DTO.Responses.MembershipResponseDTO;
+import com.firstclub.membership.DTO.Responses.UserResponseDTO;
 import java.util.List;
 
 public interface UserService {

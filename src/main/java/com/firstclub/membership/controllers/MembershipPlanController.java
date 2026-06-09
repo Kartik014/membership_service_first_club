@@ -1,6 +1,6 @@
 package com.firstclub.membership.controllers;
 
-import com.firstclub.membership.DTO.MembershipPlanResponseDTO;
+import com.firstclub.membership.DTO.Responses.MembershipPlanResponseDTO;
 import com.firstclub.membership.interfaces.MembershipPlanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

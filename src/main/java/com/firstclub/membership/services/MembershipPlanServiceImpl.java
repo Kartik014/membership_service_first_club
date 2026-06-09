@@ -1,7 +1,8 @@
 package com.firstclub.membership.services;
 
-import com.firstclub.membership.DTO.MembershipPlanResponseDTO;
+import com.firstclub.membership.DTO.Responses.MembershipPlanResponseDTO;
 import com.firstclub.membership.entity.MembershipPlan;
+import com.firstclub.membership.exceptions.ResourceNotFoundException;
 import com.firstclub.membership.interfaces.MembershipPlanService;
 import com.firstclub.membership.repository.MembershipPlanRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class MembershipPlanServiceImpl implements MembershipPlanService {
     @Transactional(readOnly = true)
     public MembershipPlanResponseDTO getPlan(Long id){
         if(!membershipPlanRepository.existsById(id)){
-            throw new RuntimeException("Membership plan with id " + id + " not found");
+            throw new ResourceNotFoundException("Membership plan with id " + id + " not found");
         }
 
         MembershipPlan plan = membershipPlanRepository.findById(id).get();

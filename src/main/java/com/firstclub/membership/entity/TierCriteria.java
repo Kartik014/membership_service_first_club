@@ -2,6 +2,7 @@ package com.firstclub.membership.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "tier_criteria")
