@@ -1,7 +1,7 @@
 package com.firstclub.membership.enums;
 
 public enum CriteriaType {
-    ORDER_COUNT,
+    TOTAL_ORDERS,
     MONTHLY_SPEND,
     MONTHLY_ORDER,
     COHORT

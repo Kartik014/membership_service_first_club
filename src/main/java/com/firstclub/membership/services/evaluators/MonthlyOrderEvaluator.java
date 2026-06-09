@@ -5,7 +5,9 @@ import com.firstclub.membership.entity.User;
 import com.firstclub.membership.entity.UserMembershipStats;
 import com.firstclub.membership.enums.CriteriaType;
 import com.firstclub.membership.interfaces.CriteriaEvaluator;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MonthlyOrderEvaluator implements CriteriaEvaluator {
     @Override
     public CriteriaType supportedType() {

@@ -8,10 +8,10 @@ import com.firstclub.membership.interfaces.CriteriaEvaluator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderCountEvaluator implements CriteriaEvaluator {
+public class TotalOrderEvaluator implements CriteriaEvaluator {
     @Override
     public CriteriaType supportedType() {
-        return CriteriaType.ORDER_COUNT;
+        return CriteriaType.TOTAL_ORDERS;
     }
 
     @Override
