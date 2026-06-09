@@ -1,13 +1,18 @@
 package com.firstclub.membership.services;
 
+import com.firstclub.membership.DTO.BenefitResponseDTO;
 import com.firstclub.membership.DTO.CreateUserRequestDTO;
 import com.firstclub.membership.DTO.MembershipResponseDTO;
 import com.firstclub.membership.DTO.UserResponseDTO;
 import com.firstclub.membership.entity.Membership;
+import com.firstclub.membership.entity.Tier;
+import com.firstclub.membership.entity.TierBenefit;
 import com.firstclub.membership.entity.User;
 import com.firstclub.membership.enums.MembershipStatus;
 import com.firstclub.membership.interfaces.UserService;
 import com.firstclub.membership.repository.MembershipRepository;
+import com.firstclub.membership.repository.TierBenefitRepository;
+import com.firstclub.membership.repository.TiersRepository;
 import com.firstclub.membership.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +25,8 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final MembershipRepository membershipRepository;
+    private final TiersRepository tiersRepository;
+    private final TierBenefitRepository tierBenefitRepository;
 
     private UserResponseDTO mapToResponse(User user){
         return new UserResponseDTO(
@@ -89,5 +96,24 @@ public class UserServiceImpl implements UserService {
                 activeMembership.getStartDate(),
                 activeMembership.getExpiryDate()
         );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BenefitResponseDTO> getUserBenefits(Long userId){
+        Membership membership = membershipRepository.findByUser_IdAndStatus(userId, MembershipStatus.ACTIVE).orElseThrow(() -> new IllegalStateException("User does not have an active membership"));
+
+        Tier tier = tiersRepository.findById(membership.getTier().getId()).orElseThrow(() -> new IllegalStateException("Tier not found"));
+
+        List<TierBenefit> tierBenefits = tierBenefitRepository.findByTier_Id(tier.getId()).orElseThrow(() -> new IllegalStateException("No benefits found for this tier"));
+
+        return tierBenefits
+                .stream()
+                .map(tb -> new BenefitResponseDTO(
+                        tb.getBenefit().getId(),
+                        tb.getBenefit().getName(),
+                        tb.getBenefit().getBenefitType()
+                ))
+                .toList();
     }
 }

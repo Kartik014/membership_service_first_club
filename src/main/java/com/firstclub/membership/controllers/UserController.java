@@ -1,5 +1,6 @@
 package com.firstclub.membership.controllers;
 
+import com.firstclub.membership.DTO.BenefitResponseDTO;
 import com.firstclub.membership.DTO.CreateUserRequestDTO;
 import com.firstclub.membership.DTO.MembershipResponseDTO;
 import com.firstclub.membership.DTO.UserResponseDTO;
@@ -34,5 +35,10 @@ public class UserController {
     @GetMapping("/{id}/memberships")
     public MembershipResponseDTO getUserActiveMembership(@PathVariable Long id){
         return userService.getUserActiveMembership(id);
+    }
+
+    @GetMapping("/{userId}/benefits")
+    public List<BenefitResponseDTO> getUserBenefits(@PathVariable Long userId){
+        return userService.getUserBenefits(userId);
     }
 }
